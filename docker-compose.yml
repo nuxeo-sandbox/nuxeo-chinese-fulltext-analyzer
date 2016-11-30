@@ -1,0 +1,41 @@
+version: '2'
+services:
+  nuxeo:
+    image: nuxeo:8.3
+    ports:
+    - "8080:8080"
+    - "8787:8787"
+    environment:
+    - TZ=US/Pacific
+    - NUXEO_DEV_MODE=true
+    - NUXEO_PACKAGES=nuxeo-jsf-ui ${STUDIO}
+    - NUXEO_TEMPLATES=\/opt\/nuxeo\/custom_templates\/es_for_chinese
+    - "NUXEO_ES_HOSTS=elasticsearch:9300"
+    - NUXEO_ES_CLUSTER_NAME=dockerCluster
+    - "NUXEO_CUSTOM_PARAM=JAVA_OPTS=$$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n\nelasticsearch.httpReadOnly.baseUrl=http://elasticsearch:9200"
+    volumes:
+    - "./nuxeo_store:/opt/nuxeo/server/packages/store/"
+    - "./nuxeo_database:/var/lib/nuxeo/data/h2"
+    - "./nuxeo_binaries:/var/lib/nuxeo/data/binaries"
+    - "./nuxeo_packages:/opt/nuxeo/packages/"
+    - "./nuxeo_templates:/opt/nuxeo/custom_templates/"
+    - "./nuxeo_plugins:/opt/nuxeo/server/nxserver/plugins"
+    - "./nuxeo_root:/root/"
+    - "./instance.clid:/var/lib/nuxeo/data/instance.clid"
+    links:
+    - elasticsearch
+  elasticsearch:
+    build: ./build_es
+    image: elasticsearch:1.7-CUSTOM
+    ports:
+    - "9200:9200"
+    - "9300:9300"
+    volumes:
+    - "./es_data:/usr/share/elasticsearch/data"
+    - "./es_config:/usr/share/elasticsearch/config"
+  kibana: 
+    image: kibana:4.1
+    ports:
+    - "5601:5601"
+    links:
+    - elasticsearch:elasticsearch
