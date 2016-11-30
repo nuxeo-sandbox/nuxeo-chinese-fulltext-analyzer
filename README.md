@@ -16,6 +16,7 @@ N/A
 ## Requirements
 Build requires the following software:
 - docker
+- docker-compose
  
 ## Limitations
 - Not sure traditional Chinese is handled correctly
@@ -28,10 +29,10 @@ N/A
 Add your instance.clid file at the root
 
 ```
-docker-compose up
-or
-start.bat
+docker-compose up -d
 ```
+ 
+Or use the start script
  
 # Resources (Documentation and other links)
 N/A
